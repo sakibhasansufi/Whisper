@@ -8,7 +8,7 @@ import { v2 as cloudinary } from 'cloudinary';
 export const getUserProfile = async (req, res) => {
     const { userName } = req.params;
     try {
-        const user = await User.findOne({ userName }).select("-select");
+        const user = await User.findOne({ userName }).select("-password");
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -41,17 +41,6 @@ export const followUnfollowUser = async (req, res) => {
             await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
             await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
 
-
-            /*
-            const newNotification = new Notification({
-                type: "follow",
-                from: req.user._id,
-                to: userToModify._id
-            });
-
-            await newNotification.save()
-
-            */
             return res.status(200).json({ message: "Unfollowed successfully" })
         } else {
             // follow the user
