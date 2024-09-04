@@ -1,8 +1,9 @@
-import express from "express";
 
 import authRoute from "./routes/auth.routes.js";
 import userRoute from "./routes/user.route.js"
+import postRoute from "./routes/post.route.js"
 
+import express from "express";
 import dotenv from "dotenv";
 import connectMongoDB from "./db/connectMongoDB.js";
 import cookieParser from "cookie-parser";
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);
+app.use("/api/posts",postRoute);
 
 
 app.get("/",(req,res)=>{
