@@ -8,9 +8,9 @@ import { Helmet } from "react-helmet-async";
 
 const Login = () => {
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+		username: "",
+		password: "",
+	});
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -35,16 +35,16 @@ const Login = () => {
                 <form className='w-[270px] md:w-10/12  mx-auto md:mx-20 flex gap-4 flex-col -mt-12 md:-mt-32 lg:mt-0' onSubmit={handleSubmit}>
                     <h1 className='text-4xl font-extrabold text-white'>{"Let's"} go.</h1>
                     <label className='input input-bordered rounded flex items-center gap-2'>
-                    <MdOutlineMail />
-                        <input
-                            type='text'
-                            className='grow'
-                            placeholder='Email'
-                            name='email'
-                            onChange={handleInputChange}
-                            value={formData.email}
-                        />
-                    </label>
+						<MdOutlineMail />
+						<input
+							type='text'
+							className='grow'
+							placeholder='username'
+							name='username'
+							onChange={handleInputChange}
+							value={formData.username}
+						/>
+					</label>
 
                     <label className='input input-bordered rounded flex items-center gap-2'>
                         <MdPassword />

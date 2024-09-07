@@ -44,7 +44,7 @@ const EditProfileModal = () => {
 							/>
 							<input
 								type='text'
-								placeholder='Username'
+								placeholder='username'
 								className='flex-1 input border border-gray-700 rounded p-2 input-md'
 								value={formData.username}
 								name='username'

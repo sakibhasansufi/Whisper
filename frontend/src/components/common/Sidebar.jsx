@@ -13,7 +13,7 @@ const Sidebar = () => {
 	const isActive = (path) => location.pathname === path;
 	const data = {
 		fullName: "John Doe",
-		userName: "johndoe",
+		username: "johndoe",
 		profileImg: "../../../public/vite.svg",
 	};
 
@@ -46,17 +46,17 @@ const Sidebar = () => {
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${data?.userName}`}
+							to={`/profile/${data?.username}`}
 							className='flex gap-3 items-center hover:bg-stone-700 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
-							<FaUser className={ isActive (`/profile/${data?.userName}`) ?'w-8 h-8 text-[#FF3131] ' : 'w-8 h-8 text-secondary'} />
+							<FaUser className={ isActive (`/profile/${data?.username}`) ?'w-8 h-8 text-[#FF3131] ' : 'w-8 h-8 text-secondary'} />
 							<span className='text-lg hidden md:block'>Profile</span>
 						</Link>
 					</li>
 				</ul>
 				{data && (
 					<Link
-						to={`/profile/${data.userName}`}
+						to={`/profile/${data.username}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-stone-700 py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
@@ -67,7 +67,7 @@ const Sidebar = () => {
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
 								<p className='text-white font-bold text-sm w-20 truncate'>{data?.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{data?.userName}</p>
+								<p className='text-slate-500 text-sm'>@{data?.username}</p>
 							</div>
 							<BiLogOut className='w-5 h-5 cursor-pointer text-red-600' />
 						</div>
