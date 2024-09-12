@@ -41,16 +41,12 @@ const SignUp = () => {
 		},
 		onSuccess: () => {
 			toast.success("Account created successfully");
-
-			{
-				/* Added this line below, after recording the video. I forgot to add this while recording, sorry, thx. */
-			}
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		},
 	});
 
     const handleSubmit = (e) => {
-		e.preventDefault(); // page won't reload
+		e.preventDefault(); 
 		mutate(formData);
 	};
 
@@ -58,7 +54,7 @@ const SignUp = () => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-    // const isError = false;
+    
     return (
         <div className="max-w-screen-xl mx-auto flex h-screen px-10 font-roboto">
             <Helmet>
