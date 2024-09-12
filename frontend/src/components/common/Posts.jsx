@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const Posts = ({ feedType }) => {
-	// const isLoading = false;
+	
 
 	const getPostEndPoint = () => {
 		switch (feedType) {
@@ -24,7 +24,7 @@ const Posts = ({ feedType }) => {
 		queryFn: async () => {
 			try {
 				const res = await fetch(POST_ENDPOINT);
-				const data = res.json();
+				const data = await res.json();
 
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong");
@@ -33,7 +33,10 @@ const Posts = ({ feedType }) => {
 			} catch (error) {
 				throw new Error(error)
 			}
-		}
+		},
+
+		
+		
 
 	});
 

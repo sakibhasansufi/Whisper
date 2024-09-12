@@ -6,19 +6,73 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import LoadingSpinner from "./LoadingSpinner";
+import Swal from 'sweetalert2'; // Import sweetalert2
 
 const Post = ({ post }) => {
     const [comment, setComment] = useState("");
+    const queryClient = useQueryClient();
+    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+
+    const { mutate: deletePost, isPending } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch(`/api/posts/${post._id}`, {
+                    method: "DELETE",
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || "Something went wrong");
+                }
+
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        onSuccess: () => {
+            
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your post has been deleted.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                
+                queryClient.invalidateQueries({ queryKey: ["posts"] });
+            });
+        },
+    });
+
     const postOwner = post.user;
     const isLiked = false;
 
-    const isMyPost = true;
+    const isMyPost = authUser._id === post.user._id;
 
     const formattedDate = "1h";
 
     const isCommenting = false;
 
-    const handleDeletePost = () => { };
+    const handleDeletePost = () => {
+        // Trigger sweetalert2 confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If user confirms, delete the post
+                deletePost();
+            }
+        });
+    };
 
     const handlePostComment = (e) => {
         e.preventDefault();
@@ -46,7 +100,10 @@ const Post = ({ post }) => {
                         </span>
                         {isMyPost && (
                             <span className='flex justify-end flex-1'>
-                                <FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
+                                {!isPending && <FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />}
+                                {isPending && (
+                                    <LoadingSpinner size='sm' />
+                                )}
                             </span>
                         )}
                     </div>
@@ -71,7 +128,6 @@ const Post = ({ post }) => {
                                     {post.comments.length}
                                 </span>
                             </div>
-                            {/* We're using Modal Component from DaisyUI */}
                             <dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
                                 <div className='modal-box rounded border border-gray-600'>
                                     <h3 className='font-bold text-lg mb-4'>COMMENTS</h3>
@@ -151,12 +207,10 @@ const Post = ({ post }) => {
             </div>
         </>
     );
-
-    
 };
 
 export default Post;
 
 Post.propTypes = {
-    post: PropTypes.object.isRequired
+    post: PropTypes.object.isRequired,
 };
