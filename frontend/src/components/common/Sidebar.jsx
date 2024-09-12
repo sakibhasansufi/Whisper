@@ -43,7 +43,7 @@ const Sidebar = () => {
 		}
 	})
 
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] })
+	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52 '>
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
@@ -88,7 +88,7 @@ const Sidebar = () => {
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={authUser?.profileImg || "any picture"} />
+								<img src={authUser?.profileImg || "https://img.freepik.com/premium-vector/stylish-default-user-profile-photo-avatar-vector-illustration_664995-352.jpg"} />
 							</div>
 						</div>
 						<div className='flex justify-between flex-1'>
