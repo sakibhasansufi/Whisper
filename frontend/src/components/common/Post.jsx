@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "./LoadingSpinner";
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 const Post = ({ post }) => {
     const [comment, setComment] = useState("");
@@ -112,7 +112,7 @@ const Post = ({ post }) => {
                         {post.img && (
                             <img
                                 src={post.img}
-                                className='h-80 object-contain rounded-lg border border-gray-700'
+                                className='h-80 w-min object-contain rounded-lg border border-gray-700'
                                 alt=''
                             />
                         )}
