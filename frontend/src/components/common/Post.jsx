@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "./LoadingSpinner";
-import Swal from 'sweetalert2'; // Import sweetalert2
+import Swal from 'sweetalert2'; 
 
 const Post = ({ post }) => {
     const [comment, setComment] = useState("");
@@ -56,7 +56,7 @@ const Post = ({ post }) => {
     const isCommenting = false;
 
     const handleDeletePost = () => {
-        // Trigger sweetalert2 confirmation
+        
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -68,7 +68,7 @@ const Post = ({ post }) => {
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                // If user confirms, delete the post
+                
                 deletePost();
             }
         });
@@ -85,7 +85,7 @@ const Post = ({ post }) => {
             <div className='flex gap-2 items-start p-4 border-b border-gray-700'>
                 <div className='avatar'>
                     <Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full overflow-hidden'>
-                        <img src={postOwner.profileImg || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnnFf6DXcgRxe71BOQm1orHpnKjJloo9c2jg&s"} />
+                        <img src={postOwner.profileImg || "https://img.freepik.com/premium-vector/stylish-default-user-profile-photo-avatar-vector-illustration_664995-352.jpg"} />
                     </Link>
                 </div>
                 <div className='flex flex-col flex-1'>
