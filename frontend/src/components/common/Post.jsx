@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "./LoadingSpinner";
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
+import { formatPostDate } from '../../utils';
 
 const Post = ({ post }) => {
     const [comment, setComment] = useState("");
@@ -87,39 +88,69 @@ const Post = ({ post }) => {
             }
         },
         onSuccess: (updatedLikes) => {
-			queryClient.setQueryData(["posts"], (oldData) => {
-				return oldData.map((p) => {
-					if (p._id === post._id) {
-						return { ...p, likes: updatedLikes };
-					}
-					return p;
-				});
-			});
-		},
+            queryClient.setQueryData(["posts"], (oldData) => {
+                return oldData.map((p) => {
+                    if (p._id === post._id) {
+                        return { ...p, likes: updatedLikes };
+                    }
+                    return p;
+                });
+            });
+        },
         onError: (error) => {
             toast.error(error.message)
         }
-    })
+    });
+
+
+    const { mutate: commentPost, isPending: isCommenting } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch(`/api/posts/comment/${post._id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text: comment })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || "Something went wrong");
+                }
+                return data;
+            } catch (error) {
+                throw new Error(error)
+            }
+        },
+        onSuccess: () => {
+            setComment("");
+            queryClient.invalidateQueries({queryKey:["posts"]})
+
+        },
+        onError: (error) => {
+            toast.error(error.message)
+        }
+    });
 
     const postOwner = post.user;
     const isLiked = post.likes.includes(authUser._id);
 
     const isMyPost = authUser._id === post.user._id;
 
-    const formattedDate = "1h";
-
-    const isCommenting = false;
-
-
+    const formattedDate = formatPostDate(post.createdAt);
 
     const handlePostComment = (e) => {
         e.preventDefault();
+        if(isCommenting) return;
+        commentPost();
     };
 
     const handleLikePost = () => {
         if (isLiking) return;
         likePost();
     };
+
 
     return (
         <>
@@ -183,7 +214,7 @@ const Post = ({ post }) => {
                                                 <div className='avatar'>
                                                     <div className='w-8 rounded-full'>
                                                         <img
-                                                            src={comment.user.profileImg || "/avatar-placeholder.png"}
+                                                            src={comment.user.profileImg || "https://img.freepik.com/premium-vector/stylish-default-user-profile-photo-avatar-vector-illustration_664995-352.jpg"}
                                                         />
                                                     </div>
                                                 </div>
