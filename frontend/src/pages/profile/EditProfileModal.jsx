@@ -41,6 +41,7 @@ const EditProfileModal = () => {
 								value={formData.fullName}
 								name='fullName'
 								onChange={handleInputChange}
+								
 							/>
 							<input
 								type='text'
