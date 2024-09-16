@@ -12,11 +12,11 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils";
 
 import Swal from "sweetalert2";
-import toast from "react-hot-toast";
+import useUpdateUserProfile from "../../components/hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -27,7 +27,6 @@ const ProfilePage = () => {
 	const profileImgRef = useRef(null);
 
 	const { username } = useParams();
-	const queryClient = useQueryClient();
 	const { follow, isPending } = useFollow();
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
@@ -64,41 +63,7 @@ const ProfilePage = () => {
 		}
 	};
 
-	const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-		mutationFn: async () => {
-			try {
-				const res = await fetch("/api/users/update", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						profileImg,
-						coverImg
-					})
-				});
-
-				const data = await res.json();
-				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
-				}
-				return data;
-			} catch (error) {
-				throw new Error(error)
-			}
-		},
-
-		onSuccess: () => {
-			toast.success("Profile updated successfully");
-			Promise.all([
-				queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-				queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
-			])
-		},
-		onError: (error) => {
-			toast.error(error.message);
-		}
-	})
+	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
 
 	const isMyProfile = authUser._id === user?._id;
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
@@ -208,11 +173,11 @@ const ProfilePage = () => {
 								{isMyProfile && <EditProfileModal authUser={authUser} />}
 								{!isMyProfile && (
 									<button
-										className="btn btn-outline rounded-full btn-sm"
+										className="btn btn-outline rounded-full btn-sm hover:bg-secondary hover:font-bold"
 										onClick={() =>
 											amIFollowing
-												? confirmUnfollow(user?._id) 
-												: follow(user?._id) 
+												? confirmUnfollow(user?._id)
+												: follow(user?._id)
 										}
 									>
 										{isPending && "Loading..."}
@@ -223,9 +188,13 @@ const ProfilePage = () => {
 								{(coverImg || profileImg) && (
 									<button
 										className="btn btn-primary rounded-full btn-sm text-black px-4 ml-2"
-										onClick={() => updateProfile()}
+										onClick={async () => {
+											await updateProfile({ coverImg, profileImg })
+											setCoverImg(null);
+											setProfileImg(null);
+										}}
 									>
-										{isUpdatingProfile ? "Updating..." : "Update"}
+										{isUpdatingProfile ? "Updating....." : "Update"}
 									</button>
 								)}
 							</div>
