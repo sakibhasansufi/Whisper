@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { v2 as cloudinary } from "cloudinary";
 
-// models
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
@@ -98,6 +97,16 @@ export const updateUser = async (req, res) => {
 		let user = await User.findById(userId);
 		if (!user) return res.status(404).json({ message: "User not found" });
 
+		const existingUser = await User.findOne({ username });
+		if (existingUser) {
+			return res.status(400).json({ error: "Username is already taken" });
+		}
+
+		const existingEmail = await User.findOne({ email });
+		if (existingEmail) {
+			return res.status(400).json({ error: "Email is already taken" });
+		}
+
 		if ((!newPassword && currentPassword) || (!currentPassword && newPassword)) {
 			return res.status(400).json({ error: "Please provide both current password and new password" });
 		}
@@ -109,13 +118,24 @@ export const updateUser = async (req, res) => {
 				return res.status(400).json({ error: "Password must be at least 6 characters long" });
 			}
 
+			const capitalLetterRegex = /[A-Z]/;
+			// Check if password contains at least one capital letter
+			if (!capitalLetterRegex.test(newPassword)) {
+				return res.status(400).json({ error: "Password must contain at least one capital letter" });
+			}
+			// Check if password contains at least one number
+			const numberRegex = /\d/;
+			if (!numberRegex.test(newPassword)) {
+				return res.status(400).json({ error: "Password must contain at least one number" });
+			}
+
 			const salt = await bcrypt.genSalt(10);
 			user.password = await bcrypt.hash(newPassword, salt);
 		}
 
 		if (profileImg) {
 			if (user.profileImg) {
-				
+
 				await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
 			}
 
